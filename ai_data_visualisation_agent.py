@@ -11,8 +11,10 @@ import streamlit as st
 import pandas as pd
 import base64
 from io import BytesIO
-from together import Together
+# from together import Together  # Removed Together
 from e2b_code_interpreter import Sandbox
+import openai
+import cohere
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
@@ -54,27 +56,44 @@ def chat_with_llm(e2b_code_interpreter: Sandbox, user_message: str, dataset_path
 You need to analyze the dataset and answer the user's query with a response and you run Python code to solve them.
 IMPORTANT: Always use the dataset path variable '{dataset_path}' in your code when reading the CSV file."""
 
+    provider = st.session_state.llm_provider
+    model_name = st.session_state.model_name
+    api_key = st.session_state.llm_api_key
+
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_message},
     ]
 
-    with st.spinner('Getting response from Together AI LLM model...'):
-        client = Together(api_key=st.session_state.together_api_key)
-        response = client.chat.completions.create(
-            model=st.session_state.model_name,
-            messages=messages,
-        )
+    with st.spinner(f'Getting response from {provider} LLM model...'):
+        if provider == "OpenAI":
+            openai.api_key = api_key
+            response = openai.chat.completions.create(
+                model=model_name,
+                messages=messages,
+            )
+            response_message = response.choices[0].message
+            python_code = match_code_blocks(response_message.content)
+            llm_content = response_message.content
+        elif provider == "Cohere":
+            co = cohere.Client(api_key)
+            prompt = system_prompt + "\nUser: " + user_message
+            response = co.chat(
+                model=model_name,
+                message=prompt,
+            )
+            llm_content = response.text
+            python_code = match_code_blocks(llm_content)
+        else:
+            st.error("Unsupported LLM provider selected.")
+            return None, ""
 
-        response_message = response.choices[0].message
-        python_code = match_code_blocks(response_message.content)
-        
         if python_code:
             code_interpreter_results = code_interpret(e2b_code_interpreter, python_code)
-            return code_interpreter_results, response_message.content
+            return code_interpreter_results, llm_content
         else:
             st.warning(f"Failed to match any Python code in model's response")
-            return None, response_message.content
+            return None, llm_content
 
 def upload_dataset(code_interpreter: Sandbox, uploaded_file) -> str:
     dataset_path = f"./{uploaded_file.name}"
@@ -93,8 +112,10 @@ def main():
     st.write("Upload your dataset and ask questions about it!")
 
     # Initialize session state variables
-    if 'together_api_key' not in st.session_state:
-        st.session_state.together_api_key = ''
+    if 'llm_provider' not in st.session_state:
+        st.session_state.llm_provider = 'OpenAI'
+    if 'llm_api_key' not in st.session_state:
+        st.session_state.llm_api_key = ''
     if 'e2b_api_key' not in st.session_state:
         st.session_state.e2b_api_key = ''
     if 'model_name' not in st.session_state:
@@ -102,29 +123,33 @@ def main():
 
     with st.sidebar:
         st.header("API Keys and Model Configuration")
-        st.session_state.together_api_key = st.sidebar.text_input("Together AI API Key", type="password")
-        st.sidebar.info("💡 Everyone gets a free $1 credit by Together AI - AI Acceleration Cloud platform")
-        st.sidebar.markdown("[Get Together AI API Key](https://api.together.ai/signin)")
-        
-        st.session_state.e2b_api_key = st.sidebar.text_input("Enter E2B API Key", type="password")
-        st.sidebar.markdown("[Get E2B API Key](https://e2b.dev/docs/legacy/getting-started/api-key)")
-        
-        # Add model selection dropdown
-        model_options = {
-            "Meta-Llama 3.1 405B": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-            "DeepSeek V3": "deepseek-ai/DeepSeek-V3",
-            "Qwen 2.5 7B": "Qwen/Qwen2.5-7B-Instruct-Turbo",
-            "Meta-Llama 3.3 70B": "meta-llama/Llama-3.3-70B-Instruct-Turbo"
-        }
+        st.session_state.llm_provider = st.selectbox("Select LLM Provider", ["OpenAI", "Cohere"])
+        if st.session_state.llm_provider == "OpenAI":
+            st.session_state.llm_api_key = st.text_input("OpenAI API Key", type="password")
+            st.sidebar.markdown("[Get OpenAI API Key](https://platform.openai.com/signup)")
+            model_options = {
+                "GPT-3.5 Turbo": "gpt-3.5-turbo",
+                "GPT-4": "gpt-4",
+            }
+        elif st.session_state.llm_provider == "Cohere":
+            st.session_state.llm_api_key = st.text_input("Cohere API Key", type="password")
+            st.sidebar.markdown("[Get Cohere API Key](https://dashboard.cohere.com/welcome)")
+            model_options = {
+                "Command R": "command-r",
+                "Command R Plus": "command-r-plus",
+            }
         st.session_state.model_name = st.selectbox(
             "Select Model",
             options=list(model_options.keys()),
-            index=0  # Default to first option
+            index=0
         )
         st.session_state.model_name = model_options[st.session_state.model_name]
 
+        st.session_state.e2b_api_key = st.text_input("Enter E2B API Key", type="password")
+        st.sidebar.markdown("[Get E2B API Key](https://e2b.dev/docs/legacy/getting-started/api-key)")
+
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-    
+
     if uploaded_file is not None:
         # Display dataset with toggle
         df = pd.read_csv(uploaded_file)
@@ -138,29 +163,29 @@ def main():
         # Query input
         query = st.text_area("What would you like to know about your data?",
                             "Can you compare the average cost for two people between different categories?")
-        
+
         if st.button("Analyze"):
-            if not st.session_state.together_api_key or not st.session_state.e2b_api_key:
+            if not st.session_state.llm_api_key or not st.session_state.e2b_api_key:
                 st.error("Please enter both API keys in the sidebar.")
             else:
                 with Sandbox(api_key=st.session_state.e2b_api_key) as code_interpreter:
                     # Upload the dataset
                     dataset_path = upload_dataset(code_interpreter, uploaded_file)
-                    
+
                     # Pass dataset_path to chat_with_llm
                     code_results, llm_response = chat_with_llm(code_interpreter, query, dataset_path)
-                    
+
                     # Display LLM's text response
                     st.write("AI Response:")
                     st.write(llm_response)
-                    
+
                     # Display results/visualizations
                     if code_results:
                         for result in code_results:
                             if hasattr(result, 'png') and result.png:  # Check if PNG data is available
                                 # Decode the base64-encoded PNG data
                                 png_data = base64.b64decode(result.png)
-                                
+
                                 # Convert PNG data to an image and display it
                                 image = Image.open(BytesIO(png_data))
                                 st.image(image, caption="Generated Visualization", use_container_width=False)
@@ -172,7 +197,7 @@ def main():
                             elif isinstance(result, (pd.DataFrame, pd.Series)):
                                 st.dataframe(result)
                             else:
-                                st.write(result)  
+                                st.write(result)
 
 if __name__ == "__main__":
     main()
