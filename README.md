@@ -4,9 +4,6 @@ This Streamlit application creates an interactive Data Visualization Assistant t
 
 The demand for AI-powered data visualization tools is surging. This project allows you to build your own AI-powered visualization tool that integrates seamlessly with your data workflows, leveraging powerful LLMs and a secure code execution environment.
 
-<!-- Add a screenshot of your new UI here. You can drag and drop the image into the GitHub editor. -->
-*A preview of the AI Data Visualization Agent UI.*
-
 This agent understands natural language queries about your data and automatically generates appropriate visualizations, making data exploration intuitive and efficient. It uses E2B's secure code execution sandbox to run the generated Python code safely.
 
 ## Features
