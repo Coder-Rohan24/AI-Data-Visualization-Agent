@@ -1,83 +1,72 @@
 # 📊 AI Data Visualization Agent
-This Streamlit application creates an interactive Data Visualization Assistant that can understand Natural Language Queries and generate appropriate Visualizations using LLMs.
-The demand for AI-powered data visualization tools is surging as businesses seek faster, more intuitive ways to understand their data. We can tap into this growing market by building our own AI-powered visualization tools that integrate seamlessly with existing data workflows.
 
-![AI Data Visualization Agent](https://github.com/GURPREETKAURJETHRA/AI-Data-Visualization-Agent/blob/main/img/AI%20DVA.jpg) 
+This Streamlit application creates an interactive Data Visualization Assistant that can understand Natural Language Queries and generate appropriate Visualizations using LLMs from providers like **OpenAI** and **Cohere**.
 
-We'll build an AI Data Visualization Agent using Together AI's powerful language models and E2B's secure code execution environment. This agent will understand natural language queries about your data and automatically generate appropriate visualizations, making data exploration intuitive and efficient.
+The demand for AI-powered data visualization tools is surging. This project allows you to build your own AI-powered visualization tool that integrates seamlessly with your data workflows, leveraging powerful LLMs and a secure code execution environment.
 
-![AI Data Visualization Agent](https://github.com/GURPREETKAURJETHRA/AI-Data-Visualization-Agent/blob/main/img/AI%20DVA1.jpg)
+<!-- Add a screenshot of your new UI here. You can drag and drop the image into the GitHub editor. -->
+*A preview of the AI Data Visualization Agent UI.*
 
-This tutorial can also be considered as a demo for the E2B Code Interpreter and Together AI, for anyone who's getting started with these libraries!
-
-Features:
-💬 Natural language query interface for data visualization                                             
-📊 Support for multiple visualization types (line, bar, scatter, pie, bubble charts)                                      
-🧹 Automatic data preprocessing and cleaning                                                        
-🔐 Secure code execution in E2B's sandboxed environment                                                              
-💻 Interactive Streamlit interface for easy data upload and visualization                                                        
-⏳ Real-time visualization generation and display                                               
-🤖 Available Models:                                   
-     → Meta-Llama 3.1 405B                                 
-     → DeepSeek V3                                  
-     → Qwen 2.5 7B                             
-     → Meta-Llama 3.3 70B                                        
-     
-![AI Data Visualization Agent](https://github.com/GURPREETKAURJETHRA/AI-Data-Visualization-Agent/blob/main/img/AI%20DVA2.jpg)
+This agent understands natural language queries about your data and automatically generates appropriate visualizations, making data exploration intuitive and efficient. It uses E2B's secure code execution sandbox to run the generated Python code safely.
 
 ## Features
-A Streamlit application that acts as your personal data visualization expert, powered by LLMs. Simply upload your dataset and ask questions in natural language - the AI agent will analyze your data, generate appropriate visualizations, and provide insights through a combination of charts, statistics, and explanations.
+A Streamlit application that acts as your personal data visualization expert. Simply upload your dataset, choose your preferred AI model, and ask questions in natural language.
 
-#### Natural Language Data Analysis
-- Ask questions about your data in plain English
-- Get instant visualizations and statistical analysis
-- Receive explanations of findings and insights
-- Interactive follow-up questioning
+#### 💬 Natural Language Data Analysis
+- Ask questions about your data in plain English.
+- Get instant visualizations and statistical analysis.
+- Receive explanations of findings and insights.
 
-#### Intelligent Visualization Selection
-- Automatic choice of appropriate chart types
-- Dynamic visualization generation
-- Statistical visualization support
-- Custom plot formatting and styling
+#### 🔐 Secure & Interactive
+- Secure code execution in E2B's sandboxed environment.
+- Interactive Streamlit interface for easy data upload and visualization.
+- Real-time visualization generation and display.
 
-#### Multi-Model AI Support
-- Meta-Llama 3.1 405B for complex analysis
-- DeepSeek V3 for detailed insights
-- Qwen 2.5 7B for quick analysis
-- Meta-Llama 3.3 70B for advanced queries
-
-![AI Data Visualization Agent](https://github.com/GURPREETKAURJETHRA/AI-Data-Visualization-Agent/blob/main/img/AI%20DVA3.jpg)
+#### 🤖 Multi-Model AI Support
+Choose from leading models provided by OpenAI and Cohere:
+-   **OpenAI:**
+    -   GPT-3.5 Turbo
+    -   GPT-4
+-   **Cohere:**
+    -   Command R
+    -   Command R Plus
 
 ## How to Run
 
 Follow the steps below to set up and run the application:
-- Before anything else, Please get a free Together AI API Key here: https://api.together.ai/signin
-- Get a free E2B API Key here: https://e2b.dev/ ; https://e2b.dev/docs/legacy/getting-started/api-key
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/GURPREETKAURJETHRA/AI-Data-Visualization-Agent.git
-   cd AI-Data-Visualization-Agent
+- Get your API Keys:
+    - **OpenAI API Key**: [platform.openai.com/signup](https://platform.openai.com/signup)
+    - **Cohere API Key**: [dashboard.cohere.com/welcome](https://dashboard.cohere.com/welcome)
+    - **E2B API Key**: [e2b.dev/docs/legacy/getting-started/api-key](https://e2b.dev/docs/legacy/getting-started/api-key)
 
-   ```
-2. **Install the dependencies**
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/Coder-Rohan24/AI-Data-Visualization-Agent.git
+    cd AI-Data-Visualization-Agent
+    ```
+
+2.  **Install the dependencies**
     ```bash
     pip install -r requirements.txt
     ```
-3. **Run the Streamlit app**
+
+3.  **Run the Streamlit app**
     ```bash
     streamlit run ai_data_visualisation_agent.py
     ```
+    Enter your API keys in the sidebar to begin.
 
 Happy coding! 🚀✨
 
-## ©️ License 🪪 
+## ©️ License 🪪
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-#### **If you like this LLM Project do drop ⭐ to this repo**
-#### Follow me on [![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gurpreetkaurjethra/) &nbsp; [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GURPREETKAURJETHRA/)
+#### **If you like this LLM Project, please ⭐ this repo!**
+#### Built by Anirban Halder
+Follow me on [![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/anirban-halder-b252a7258/) &nbsp; [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Coder-Rohan24/)
 
 ---
